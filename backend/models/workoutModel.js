@@ -19,6 +19,10 @@ const workoutSchema = new Schema({
     date: {
         type: Date, 
         required: false,
+    }, 
+    user: {
+        type: String, //UserID of user who's workout this is
+        required: false,
     }
     
 }, {timestamps: true})
