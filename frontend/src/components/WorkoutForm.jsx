@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { HiCheck, HiChevronLeft, HiChevronRight, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineX } from "react-icons/hi";
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 
 
 const WorkoutForm = () => {
+    const {workouts, dispatch} = useWorkoutsContext()
     const [title, setTitle] = useState('')
     const [numExercises, setNumExercises] = useState(1)
     const [exercises, setExercises] = useState([["", 1, [[0, 0]]],]) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
@@ -32,6 +34,7 @@ const WorkoutForm = () => {
           i === index ? [e.target.value, exercise[1], exercise[2]] : exercise
         );
         setExercises(updatedExercises);
+        setNumExercises(numExercises)
       }
     
     function setExerciseSets(index) {
@@ -41,13 +44,14 @@ const WorkoutForm = () => {
             : exercise
         );
         setExercises(updatedExercises);
+        setNumExercises(numExercises);
     }
 
     function deleteExercise(index) {
         const updatedExercises = exercises.filter((_, i) => i !== index);
         if (numExercises-1>0){
             setExercises(updatedExercises);
-            setNumExercises()
+            setNumExercises(numExercises-1)
         } else {
             alert("Must have at least one exercise")
         }
@@ -55,30 +59,33 @@ const WorkoutForm = () => {
     
     
     function setExerciseWeight(e, idx, index) {
+        const value = e.target.value === '' ? '' : parseInt(e.target.value) || 0;
         const updatedExercises = exercises.map((exercise, i) => {
-          if (i === idx) {
-            const updatedWeight = exercise[2].map((set, j) =>
-              j === index ? [parseInt(e.target.value) || 0, set[1]] : set
-            );
-            return [exercise[0], exercise[1], updatedWeight];
-          }
-          return exercise;
+            if (i === idx) {
+                const updatedWeight = exercise[2].map((set, j) =>
+                    j === index ? [value, set[1]] : set
+                );
+                return [exercise[0], exercise[1], updatedWeight];
+            }
+            return exercise;
         });
         setExercises(updatedExercises);
     }
     
     function setExerciseSet(e, idx, index) {
+        const value = e.target.value === '' ? '' : parseInt(e.target.value) || 0;
         const updatedExercises = exercises.map((exercise, i) => {
-          if (i === idx) {
-            const updatedSets = exercise[2].map((set, j) =>
-              j === index ? [set[0], parseInt(e.target.value) || 0] : set
-            );
-            return [exercise[0], exercise[1], updatedSets];
-          }
-          return exercise;
+            if (i === idx) {
+                const updatedSets = exercise[2].map((set, j) =>
+                    j === index ? [set[0], value] : set
+                );
+                return [exercise[0], exercise[1], updatedSets];
+            }
+            return exercise;
         });
         setExercises(updatedExercises);
     }
+    
     function deleteSet(idx, index) {
         const updatedExercises = exercises.map((exercise, i) => {
             if (i === idx) {
@@ -104,7 +111,7 @@ const WorkoutForm = () => {
         e.preventDefault()
 
         const workout = {title, numExercises, exercises, date}
-
+        console.log(workout)
         const response = await fetch ('http://localhost:4000/api/workouts', {
             method: 'POST',
             body: JSON.stringify(workout),
@@ -124,6 +131,7 @@ const WorkoutForm = () => {
             setError(null)
             setStage(0)
             console.log('new workout added', json)
+            dispatch({type:'CREATE_WORKOUT', payload: json})
         }
         
     }
@@ -200,7 +208,7 @@ const WorkoutForm = () => {
                                                 </div>
                                                 <div className="flex flex-row justify-around">
                                                     <label className="p-2">Exercise Name: </label>
-                                                    <input type="text" onChange={(e) => setExerciseName(e, idx)} value={exercises[idx][0]} required className="p-1 border bg-gray-200 border-gray-700 rounded-md text-center"/>
+                                                    <input type="text" onInput={(e) => setExerciseName(e, idx)} value={exercises[idx][0]} required className="p-1 border bg-gray-200 border-gray-700 rounded-md text-center"/>
                                                 </div>
                                                 {Array(exercises[idx][1]).fill(0).map((x, index) => (
                                                     <div key={index} className="flex flex-col border-2 m-2 pb-2 border-gray-500 rounded-lg shadow-lg bg-slate-200">
