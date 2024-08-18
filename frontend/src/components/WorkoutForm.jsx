@@ -1,8 +1,9 @@
 import { useState } from "react"
 import { HiCheck, HiChevronLeft, HiChevronRight, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineX } from "react-icons/hi";
-
+import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
 
 const WorkoutForm = () => {
+    const {dispatch} = useWorkoutsContext()
     const [title, setTitle] = useState('')
     const [numExercises, setNumExercises] = useState(1)
     const [exercises, setExercises] = useState([["", 1, [[0, 0]]],]) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
@@ -118,6 +119,7 @@ const WorkoutForm = () => {
             console.log(error)
         }
         if (response.ok){
+            dispatch({type: 'CREATE_WORKOUT', payload: json})
             setTitle('')
             setNumExercises(1)
             setExercises([["", 1, [[0, 0]]],])
