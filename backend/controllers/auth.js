@@ -51,13 +51,23 @@ export const login = (req,res)=>{
 
         if(!validPassword) return res.status(400).json("Username or password is incorrect")
         
-        const token = jwt.sign({id: data[0].id}, process.env.JWT_SECRET, {expiresIn: "1d"});
-        const {password, ...other} = data[0]
-
-        res.cookie("access_token", token, {httpOnly: true, sameSite: true}).status(200).json(other)
-    })
+        const token = jwt.sign({ id: data[0].id }, process.env.JWT_SECRET, { algorithm: 'HS256', expiresIn: "1d" });
+        const { password, ...user } = data[0]; 
+    
+        
+        res.cookie("access_token", token, {
+            httpOnly: true,
+            sameSite: "lax",
+            secure: process.env.NODE_ENV === "production",
+        }).status(200).json({ user, token });
+        });
 }
 
 export const logout = (req,res)=>{
-    res.clearCookie("access_token",{sameSite:"none", secure:true}).status(200).json("User has been logged out")
+    res.clearCookie("access_token", {
+        sameSite: "none",
+        secure: process.env.NODE_ENV === "production", 
+      })
+      .status(200)
+      .json("User has been logged out");
 }

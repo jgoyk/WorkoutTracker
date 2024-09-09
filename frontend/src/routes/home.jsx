@@ -1,19 +1,51 @@
-import { useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import WorkoutForm from '../components/WorkoutForm'
+import { AuthContext } from "../context/authContext"
+import axios from "axios"
+import WorkoutDetails from "../components/WorkoutDetails"
 
 
 function Home() {
-  
+  const [workouts, setWorkouts] = useState([])
+  const { currentUser, currentToken } = useContext(AuthContext);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        if (!currentToken) {
+          console.log('No token found, user might not be authenticated');
+          return;
+        }
+
+        const res = await axios.get(`${import.meta.env.VITE_DB_URL}/workouts`, {
+          headers: {
+            Authorization: `Bearer ${currentToken}`
+          }
+        });
+        setWorkouts(res.data);
+      } catch (err) {
+        console.error('Error fetching workouts:', err);
+      }
+    };
+
+    if (currentUser && currentToken) {
+      fetchData();
+    }
+  }, [currentUser, currentToken]);
 
   
   return (
     <div className="w-full h-full flex flex-col ">
       <div className="text-xl font-semibold p-2 m-4 text-center">All Workouts</div>
-      {/* {workouts && workouts.map((workout, idx) => (
+      {workouts.map((workout, idx) => (
         <WorkoutDetails key={idx} workout={workout}/>
-        
-      ))} */}
+      ))}
+      {!currentUser && 
+        <div>
+          Please login to see your workouts
+        </div>
+      }
       <WorkoutForm/>
     </div>
   )
