@@ -1,3 +1,4 @@
+import unusedImports from "eslint-plugin-unused-imports";
 module.exports = {
   root: true,
   env: { browser: true, es2020: true },
@@ -10,9 +11,11 @@ module.exports = {
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', { "unused-imports": unusedImports }],
   rules: {
     'react/jsx-no-target-blank': 'off',
+    "unused-imports/no-unused-vars": "warn",
+    "unused-imports/no-unused-imports": "warn",
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },

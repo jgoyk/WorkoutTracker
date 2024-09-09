@@ -1,28 +1,18 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/home";
 import "./index.css";
-import NavBar from "./components/navBar";
+import HeaderLayout from "./components/header";
 import ErrorPage from "./routes/errorPage";
-import Footer from "./components/footer";
+
 import Charts from "./routes/charts";
 import Exercises from "./routes/exercises";
-import { WorkoutContextProvider } from "./context/WorkoutsContext";
+import Login from "./routes/login";
+import Register from "./routes/register";
+import { AuthContextProvider } from "./context/authContext.jsx";
 
-const HeaderLayout = () => (
-  <div className="flex flex-col min-h-screen ">
-    <header className="bg-stone-200 sticky top-0">
-      <NavBar />
-    </header>
-    <div className="bg-stone-300 min-h-full grow">
-      <Outlet />
-    </div>
-    <footer className="bg-stone-300">
-      <Footer />
-    </footer>
-  </div>
-);
+
 
 const router = createBrowserRouter([
   {
@@ -41,14 +31,22 @@ const router = createBrowserRouter([
         path: "/exercises",
         element: <Exercises />,
       },
+      {
+        path: "/login",
+        element: <Login />,
+      },
+      {
+        path: "/register",
+        element: <Register />,
+      },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <WorkoutContextProvider>
+    <AuthContextProvider>
       <RouterProvider router={router} />
-    </WorkoutContextProvider>
+    </AuthContextProvider>
   </React.StrictMode>
 );

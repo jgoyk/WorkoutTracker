@@ -1,43 +1,23 @@
-require('dotenv').config()
-const cors = require('cors');  
-const express = require('express')
-const mongoose = require('mongoose')
-const workoutRoutes = require("./routes/workouts.js")
-const exerciseRoutes = require("./routes/exercises.js")
+import express from "express"; 
+import "dotenv/config"
+import workoutRoutes from "./routes/workouts.js";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import cors from 'cors';
+import cookieParser from "cookie-parser";
 
+const app = express();
 
-
-//app is an express app
-const app = express()
-
-//use cors
-app.use(cors());
-
-//middleware that checks for request body
 app.use(express.json())
+app.use(cors())
+app.use(cookieParser())
+app.use('/api/workouts', workoutRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
-//middleware
-app.use((req, res, next)=> {
-    console.log(req.path, req.method)
-    next()
+
+const PORT = process.env.PORT || 8800;
+
+app.listen(PORT, () => {
+    console.log(`Backend server is running on port ${PORT}`);
 })
-
-app.use('/api/workouts', workoutRoutes)
-app.use('/api/exercises', exerciseRoutes)
-
-//connect to DB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        //app starts listening for requests on port 4000n
-        app.listen(process.env.PORT, ()=>{
-            console.log("Connected to DB & Listening on port " + process.env.PORT)
-        })
-    })
-    .catch((error) => {
-        console.log(error)
-    })
-
-
-
-
-

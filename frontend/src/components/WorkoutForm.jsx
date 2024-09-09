@@ -1,9 +1,8 @@
 import { useState } from "react"
 import { HiCheck, HiChevronLeft, HiChevronRight, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineX } from "react-icons/hi";
-import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
+
 
 const WorkoutForm = () => {
-    const {dispatch} = useWorkoutsContext()
     const [title, setTitle] = useState('')
     const [numExercises, setNumExercises] = useState(1)
     const [exercises, setExercises] = useState([["", 1, [[0, 0]]],]) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
@@ -106,27 +105,7 @@ const WorkoutForm = () => {
 
         const workout = {title, numExercises, exercises, date}
 
-        const response = await fetch ('http://localhost:4000/api/workouts', {
-            method: 'POST',
-            body: JSON.stringify(workout),
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        })
-        const json = await response.json()
-        if (!response.ok) {
-            setError(json.error)
-            console.log(error)
-        }
-        if (response.ok){
-            dispatch({type: 'CREATE_WORKOUT', payload: json})
-            setTitle('')
-            setNumExercises(1)
-            setExercises([["", 1, [[0, 0]]],])
-            setError(null)
-            setStage(0)
-            console.log('new workout added', json)
-        }
+        
         
     }
 
