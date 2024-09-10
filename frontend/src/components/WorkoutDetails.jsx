@@ -1,4 +1,5 @@
 import { HiOutlineTrash } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 
 const WorkoutDetails = ({ workout }) => {
@@ -12,7 +13,11 @@ const WorkoutDetails = ({ workout }) => {
           <table className="table-auto border border-slate-500">
             <thead className="border border-slate-500">
               <tr className="flex flex-row justify-around p-2">
-                <th colSpan="1">{workout.title ? workout.title : "Workout"}</th>
+                <th colSpan="1" className="underline">
+                  <Link to={`/workout/${id}`}>
+                    {workout.title ? workout.title : "Workout"}
+                  </Link>
+                </th>
                 <th colSpan="1" className="font-semibold italic">{workout.date ? `${new Date(workout.date).getUTCMonth()+1}/${new Date(workout.date).getUTCDate()}/${new Date(workout.date).getUTCFullYear()}` : "No Date"}</th>
                 <th onClick={handleDelete}><HiOutlineTrash className="h-6 w-6" /></th>
               </tr>
