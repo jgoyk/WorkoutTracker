@@ -41,12 +41,14 @@ function Home() {
       {workouts.map((workout, idx) => (
         <WorkoutDetails key={idx} workout={workout}/>
       ))}
-      {!currentUser && 
-        <div>
+      {!currentUser ?
+        <div className="font-bold text-center p-2 text-2xl text-red-600">
           Please login to see your workouts
-        </div>
+        </div> 
+        :
+        <WorkoutForm/>
       }
-      <WorkoutForm/>
+      
     </div>
   )
 }
