@@ -9,6 +9,13 @@ function Home() {
   const [workouts, setWorkouts] = useState([])
   const { currentUser, currentToken } = useContext(AuthContext);
 
+  const handleDeleteWorkout = (workoutId) => {
+    setWorkouts((prevWorkouts) => prevWorkouts.filter(workout => workout.id !== workoutId));
+  };
+  const handleAddWorkout = (workout) => {
+    setWorkouts([...workouts, workout]);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -39,14 +46,14 @@ function Home() {
     <div className="w-full h-full flex flex-col ">
       <div className="text-xl font-semibold p-2 m-4 text-center">All Workouts</div>
       {workouts.map((workout, idx) => (
-        <WorkoutDetails key={idx} workout={workout}/>
+        <WorkoutDetails currentUser={currentUser} currentToken={currentToken} key={idx} workout={workout} onDeleteWorkout={handleDeleteWorkout}/>
       ))}
       {!currentUser ?
         <div className="font-bold text-center p-2 text-2xl text-red-600">
           Please login to see your workouts
         </div> 
         :
-        <WorkoutForm/>
+        <WorkoutForm currentUser={currentUser} currentToken={currentToken} onAddWorkout={handleAddWorkout}/>
       }
       
     </div>

@@ -12,18 +12,38 @@ export const getWorkouts = (req, res) => {
 };
 
 export const getWorkout = (req, res) => {
-  const q = "SELECT `username`, `title`, `numExercises`, `exercises`, `date`, FROM users u JOIN workouts w ON u.id=w.uid WHERE w.id = ?"
+  const q = "SELECT `username`, `title`, `numexercises`, `exercises`, `date` FROM users u JOIN workouts w ON u.id=w.uid WHERE w.id = ?"
 
-  db.query(q, [req.params.id] = (err, data) => {
-    if (err) return res.json(err);
+  db.query(q, [req.params.id], (err, data) => {
+    if (err) return res.json(`error: ${err}`);
     return res.status(200).json(data[0]);
   })
 }
 export const addWorkout = (req, res) => {
-    res.json("from controller")
+    const q = "INSERT INTO workouts(`title`, `numexercises`, `exercises`, `uid`, `date`) VALUES (?)"
+
+
+    const values = [
+        req.body[0],
+        req.body[1],
+        JSON.stringify(req.body[2]),
+        req.user.id,
+        req.body[3] 
+    ]
+    
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json(data);
+    })
 }
 export const deleteWorkout = (req, res) => {
-    res.json("from controller")
+    
+    const q = "DELETE FROM workouts WHERE `id`=? AND `uid`=?"
+
+    db.query(q, [req.params.id, req.user.id], (err, data) => {
+        if (err) return res.json(err);
+        return res.status(200).json(data);
+    })
 }
 export const updateWorkout = (req, res) => {
     res.json("from controller")

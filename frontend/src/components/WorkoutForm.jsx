@@ -1,15 +1,50 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { HiCheck, HiChevronLeft, HiChevronRight, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineX } from "react-icons/hi";
+import { AuthContext } from "../context/authContext";
+import axios from "axios";
 
 
-const WorkoutForm = () => {
+const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
     const [title, setTitle] = useState('')
     const [numExercises, setNumExercises] = useState(1)
-    const [exercises, setExercises] = useState([["", 1, [[0, 0]]],]) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
+    const [exercises, setExercises] = useState([["", 1, [[0, 0]]]]) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
     const [stage, setStage] = useState(0)
     const [date, setDate] = useState(new Date())
     const [error, setError] = useState(null)
 
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        const workout = [title, numExercises, {"exercises" : exercises}, new Date(date).toISOString().slice(0, 19).replace('T', ' ')]
+        
+        if (currentUser && currentToken) {
+            try {
+        
+                if (!currentToken) {
+                console.log('No token found, user might not be authenticated');
+                return;
+                }
+        
+                const res = await axios.post(`${import.meta.env.VITE_DB_URL}/workouts`, workout, {
+                headers: {
+                    Authorization: `Bearer ${currentToken}`
+                }
+                });
+                const newWorkout = {"id" : res.data.insertId, "cat" : null, "date": workout[3], "exercises":workout[2], "numexercises": workout[1], "title": workout[0]}
+                onAddWorkout(newWorkout)
+                setStage(0)
+                
+                
+            } catch (err) {
+                console.error('Error adding workout:', err);
+            }
+        } else {
+            console.log("No user found")
+        }
+        
+        
+    }
 
     function submitForm(e){
         e.preventDefault();
@@ -18,7 +53,7 @@ const WorkoutForm = () => {
         {
             if (!document.getElementById('name').value) setTitle("Unnamed Workout")
             setStage(stage+1)
-            console.log(exercises)
+            
         } 
         else 
         {
@@ -30,7 +65,8 @@ const WorkoutForm = () => {
     function setExerciseName(e, index) {
         const updatedExercises = exercises.map((exercise, i) =>
           i === index ? [e.target.value, exercise[1], exercise[2]] : exercise
-        );
+        ); 
+        
         setExercises(updatedExercises);
       }
     
@@ -47,7 +83,7 @@ const WorkoutForm = () => {
         const updatedExercises = exercises.filter((_, i) => i !== index);
         if (numExercises-1>0){
             setExercises(updatedExercises);
-            setNumExercises()
+            setNumExercises(numExercises-1)
         } else {
             alert("Must have at least one exercise")
         }
@@ -100,14 +136,7 @@ const WorkoutForm = () => {
         setNumExercises(numExercises + 1);
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        const workout = {title, numExercises, exercises, date}
-
-        
-        
-    }
+    
 
     return (
         <div className=" flex flex-row justify-center">
