@@ -11,6 +11,7 @@ import Exercises from "./routes/exercises";
 import Login from "./routes/login";
 import Register from "./routes/register";
 import { AuthContextProvider } from "./context/authContext.jsx";
+import Single from "./routes/single.jsx";
 
 
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/exercises",
         element: <Exercises />,
+      },
+      {
+        path: "/workout/:id",
+        element: <Single />,
       },
       {
         path: "/login",
