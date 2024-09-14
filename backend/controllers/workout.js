@@ -46,5 +46,13 @@ export const deleteWorkout = (req, res) => {
     })
 }
 export const updateWorkout = (req, res) => {
-    res.json("from controller")
+
+  const workoutId = req.params.id;
+  const q = "UPDATE workouts SET `title` = ?, `numexercises` = ?, `exercises` = ?, `date` = ? WHERE `id` = ? AND `uid` = ?";
+  const values = [req.body[0], req.body[1], JSON.stringify(req.body[2]), req.body[3], workoutId, req.user.id];
+  
+  db.query(q, [...values], (err, data) => {
+    if (err) return res.json(err);
+    return res.status(200).json(data);
+  });
 }

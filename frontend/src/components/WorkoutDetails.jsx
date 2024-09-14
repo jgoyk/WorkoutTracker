@@ -1,12 +1,14 @@
 import axios from "axios";
-import { HiOutlineTrash } from "react-icons/hi";
+import { useState } from "react";
+import { HiOutlinePencilAlt, HiOutlineTrash } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
+import WorkoutUpdateForm from "./WorkoutUpdateForm";
 
 
-const WorkoutDetails = ({ workout, currentUser, currentToken, onDeleteWorkout }) => {
-
+const WorkoutDetails = ({ workout, currentUser, currentToken, onDeleteWorkout, onEditWorkout }) => {
+  const [editing, setEditing] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleDelete = async (workoutId) => {
     try {
       if (!currentToken) {
@@ -30,8 +32,14 @@ const WorkoutDetails = ({ workout, currentUser, currentToken, onDeleteWorkout })
       console.error("Error fetching workouts:", err);
     }
   }
+  const handleEdit = async (workoutId) => {
+    setEditing(true);
+
+  }
+  
   return (
       <div key={workout.id} className="p-2 ">
+        {editing && <WorkoutUpdateForm workout={workout} onEditWorkout={onEditWorkout} currentUser={currentUser} currentToken={currentToken} setEditing={setEditing}/>}
         <table className="table-auto border border-slate-500">
           <thead className="border border-slate-500">
             <tr className="flex flex-row justify-around p-2">
@@ -41,8 +49,10 @@ const WorkoutDetails = ({ workout, currentUser, currentToken, onDeleteWorkout })
                 </Link>
               </th>
               <th colSpan="1" className="font-semibold italic">{workout.date ? `${new Date(workout.date).getUTCMonth()+1}/${new Date(workout.date).getUTCDate()}/${new Date(workout.date).getUTCFullYear()}` : "No Date"}</th>
-              <th onClick={() => handleDelete(workout.id)} className="cursor-pointer">
-                <HiOutlineTrash className="h-6 w-6" />
+              <th >
+                <HiOutlineTrash className="h-6 w-6 cursor-pointer" onClick={() => handleDelete(workout.id)}/>
+                <HiOutlinePencilAlt className="h-6 w-6 cursor-pointer" onClick={() => handleEdit(workout.id)} />
+                
               </th>
             </tr>
             

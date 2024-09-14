@@ -1,21 +1,21 @@
-import {  useState } from "react"
+import { useState } from "react"
 import { HiCheck, HiChevronLeft, HiChevronRight, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineX } from "react-icons/hi";
 import axios from "axios";
 
 
-const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
-    const [title, setTitle] = useState('')
-    const [numExercises, setNumExercises] = useState(1)
-    const [exercises, setExercises] = useState([["", 1, [[0, 0]]]]) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
-    const [stage, setStage] = useState(0)
-    const [date, setDate] = useState(new Date())
+const WorkoutUpdateForm = ({currentUser, currentToken, onEditWorkout, workout, setEditing}) => {
+    const [title, setTitle] = useState(workout.title)
+    const [numExercises, setNumExercises] = useState(workout.numexercises)
+    const [exercises, setExercises] = useState(workout.exercises.exercises) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
+    const [stage, setStage] = useState(1)
+    const [date, setDate] = useState(new Date(workout.date))
     const [error, setError] = useState(null)
 
 
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        const workout = [title, numExercises, {"exercises" : exercises}, new Date(date).toISOString().slice(0, 19).replace('T', ' ')]
+        const updatedWorkout = [title, numExercises, {"exercises" : exercises}, new Date(date).toISOString().slice(0, 19).replace('T', ' ')]
         
         if (currentUser && currentToken) {
             try {
@@ -25,15 +25,14 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
                 return;
                 }
         
-                const res = await axios.post(`${import.meta.env.VITE_DB_URL}/workouts`, workout, {
+                const res = await axios.put(`${import.meta.env.VITE_DB_URL}/workouts/${workout.id}`, updatedWorkout, {
                 headers: {
                     Authorization: `Bearer ${currentToken}`
                 }
                 });
-                const newWorkout = {"id" : res.data.insertId, "cat" : null, "date": workout[3], "exercises":workout[2], "numexercises": workout[1], "title": workout[0]}
-                onAddWorkout(newWorkout)
-                setStage(0)
-                
+                const newWorkout = {"id" : res.data.insertId, "cat" : null, "date": updatedWorkout[3], "exercises":updatedWorkout[2], "numexercises": updatedWorkout[1], "title": updatedWorkout[0]}
+                onEditWorkout(newWorkout)
+                setEditing(false)
                 
             } catch (err) {
                 console.error('Error adding workout:', err);
@@ -138,26 +137,20 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
     
 
     return (
-        <div className=" flex flex-row justify-center">
-            {stage == 0 && 
-                <div className="" >
-                    <HiOutlinePlusCircle onClick={() => setStage(stage+1)} className="h-16 size-16"/>
-                </div>
-            }
-            
+        <div className=" flex flex-row justify-center">          
             {(stage == 1 || stage==2) &&
                 <div className="fixed inset-0 flex items-center justify-center p-16 z-50">
                     <div className="fixed inset-0 flex items-center justify-center p-16 z-50 h-full max-h-screen">
-                        <div className="fixed inset-0 w-screen bg-black opacity-50 z-40" onClick={()=> setStage(0)}></div>
+                        <div className="fixed inset-0 w-screen bg-black opacity-50 z-40" onClick={()=> setEditing(false)}></div>
                         
                             {stage==1 &&
                                 <div className="relative max-w-lg border border-black p-2 rounded-md shadow-lg bg-white z-50 pb-4">
                                     <div className="flex flex-row justify-between align-middle ">
                                         <div className="flex flex-row justify-between w-full align-middle h-full items-center pt-2">
-                                            <button type="submit" className=" pl-2 flex flex-col align-middle hover:scale-110" onClick={() => {setStage(stage-1)}}>
+                                            <button type="submit" className=" pl-2 flex flex-col align-middle hover:scale-110" onClick={() => {setEditing(false)}}>
                                                 <HiOutlineX className=" text-gray-500 size-6 hover:text-red-500"/>
                                             </button>
-                                            <div className="text-center font-semibold text-xl px-2 m-4">Add a New Workout</div>
+                                            <div className="text-center font-semibold text-xl px-2 m-4">Update Workout</div>
                                         </div>
                                     </div>
                                     <hr/>
@@ -248,4 +241,4 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
         </div>
     )
 }
-export default WorkoutForm;
+export default WorkoutUpdateForm;
