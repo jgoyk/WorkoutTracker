@@ -2,7 +2,8 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
-import { HiOutlineTrash } from "react-icons/hi";
+import { HiOutlinePencilAlt, HiOutlineTrash } from "react-icons/hi";
+import WorkoutUpdateForm from "../components/WorkoutUpdateForm";
 
 function Single() {
   const [workout, setWorkout] = useState([]);
@@ -10,6 +11,8 @@ function Single() {
   const location = useLocation();
   const navigate = useNavigate();
   const workoutId = location.pathname.split("/")[2];
+  const [editing, setEditing] = useState(false);
+
 
   const handleDelete = async () => {
     try {
@@ -34,7 +37,12 @@ function Single() {
       console.error("Error fetching workouts:", err);
     }
   }
-
+  const handleEdit = async () => {
+    setEditing(true);
+  }
+  const onEditWorkout = async (updatedWorkout) => {
+    setWorkout(updatedWorkout);
+  }
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -66,9 +74,10 @@ function Single() {
     }
   }, [currentUser, currentToken]);
 
-
+  console.log(workout)
   return (
     <div className="w-full h-full flex flex-col ">
+      {editing && <WorkoutUpdateForm workout={workout} onEditWorkout={onEditWorkout} currentUser={currentUser} currentToken={currentToken} setEditing={setEditing}/>}
       <div className="text-xl font-semibold p-2 m-4 text-center">
         Single Workouts
       </div>
@@ -85,8 +94,9 @@ function Single() {
                       ).getUTCDate()}/${new Date(workout.date).getUTCFullYear()}`
                     : "No Date"}
                 </th>
-                <th onClick={handleDelete} className="cursor-pointer">
-                  <HiOutlineTrash className="h-6 w-6 " />
+                <th className="flex flex-row">
+                  <HiOutlineTrash className="h-6 w-6 cursor-pointer" onClick={() => handleDelete()}/>
+                  <HiOutlinePencilAlt className="h-6 w-6 cursor-pointer" onClick={() => handleEdit()} />
                 </th>
               </tr>
             </thead>
@@ -109,7 +119,7 @@ function Single() {
                           </tr>
                         </thead>
                         <tbody>
-                          {item[1].map((set, setIndex) => (
+                          {item[2].map((set, setIndex) => (
                             <tr key={setIndex}>
                               <td className="text-center">{setIndex + 1}</td>
                               <td className="text-center">{set[0]}</td>

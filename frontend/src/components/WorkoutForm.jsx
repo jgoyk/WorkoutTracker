@@ -21,8 +21,8 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
             try {
         
                 if (!currentToken) {
-                console.log('No token found, user might not be authenticated');
-                return;
+                    console.log('No token found, user might not be authenticated');
+                    return;
                 }
         
                 const res = await axios.post(`${import.meta.env.VITE_DB_URL}/workouts`, workout, {

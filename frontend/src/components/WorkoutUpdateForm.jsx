@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { HiCheck, HiChevronLeft, HiChevronRight, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineX } from "react-icons/hi";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 
 const WorkoutUpdateForm = ({currentUser, currentToken, onEditWorkout, workout, setEditing}) => {
@@ -10,19 +11,21 @@ const WorkoutUpdateForm = ({currentUser, currentToken, onEditWorkout, workout, s
     const [stage, setStage] = useState(1)
     const [date, setDate] = useState(new Date(workout.date))
     const [error, setError] = useState(null)
-
-
+    const location = useLocation();
+    const workoutId = location.pathname.split("/")[2];
+    
     const handleSubmit = async (e) => {
         e.preventDefault()
-
-        const updatedWorkout = [title, numExercises, {"exercises" : exercises}, new Date(date).toISOString().slice(0, 19).replace('T', ' ')]
+        
+        
+        const updatedWorkout = [title, numExercises, {"exercises" : exercises}, new Date(date).toISOString().slice(0, 19).replace('T', ' '), workoutId]
         
         if (currentUser && currentToken) {
             try {
         
                 if (!currentToken) {
-                console.log('No token found, user might not be authenticated');
-                return;
+                    console.log('No token found, user might not be authenticated');
+                    return;
                 }
         
                 const res = await axios.put(`${import.meta.env.VITE_DB_URL}/workouts/${workout.id}`, updatedWorkout, {
