@@ -2,6 +2,7 @@ import { useContext, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios";
 import { AuthContext } from "../context/authContext.jsx";
+import { Button } from "@/components/ui/button.jsx";
 
 function Register() {
   const [inputs, setInputs] = useState({
@@ -31,7 +32,7 @@ const handleSubmit = async e =>{
 
 return (
   <div className="w-full h-full flex flex-col p-2">
-    <div className="font-bold text-2xl text-center">Login Page</div>
+    <div className="font-semibold text-center text-xl py-2">Login</div>
     <div className=" flex flex-row w-full justify-center p-2">
       <div className="flex flex-col max-w-md border-2 rounded-md border-gray-600 py-8 px-4 bg-gray-300">
         {err && <p className="text-red-600 font-bold text-center pt-4">Error: {err}</p>}
@@ -43,7 +44,7 @@ return (
                 <input required type="password" placeholder="password" name='password' onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"/>
             </div>
             <div className="flex flex-row justify-center w-full py-2">
-                <button onClick={handleSubmit} className="shadow-md rounded-lg bg-green-300 p-2 border border-black hover:bg-green-400">Login</button>
+                <Button onClick={handleSubmit} className="">Login</Button>
             </div>
         </form>
         <span className="text-center">

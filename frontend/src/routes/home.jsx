@@ -47,7 +47,6 @@ function Home() {
   
   return (
     <div className="w-full h-full flex flex-col ">
-      <div className="text-xl font-semibold p-2 m-4 text-center">All Workouts</div>
       {workouts.map((workout, idx) => (
         <WorkoutDetails currentUser={currentUser} currentToken={currentToken} key={idx} workout={workout} onDeleteWorkout={handleDeleteWorkout} onEditWorkout={handleEditWorkout}/>
       ))}
@@ -55,6 +54,7 @@ function Home() {
         <div className="font-bold text-center p-2 text-2xl text-red-600">
           Please login to see your workouts
         </div> 
+        
         :
         <WorkoutForm currentUser={currentUser} currentToken={currentToken} onAddWorkout={handleAddWorkout}/>
       }
