@@ -16,5 +16,5 @@ app.use(cookieParser())
 app.use('/api/workouts', workoutRoutes);
 app.use('/api/auth', authRoutes);
 
-
+//default export for vercel
 export default app;
