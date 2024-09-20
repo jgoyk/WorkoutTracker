@@ -12,7 +12,7 @@ import Login from "./routes/login";
 import Register from "./routes/register";
 import { AuthContextProvider } from "./context/authContext.jsx";
 import Single from "./routes/single.jsx";
-
+import { Toaster } from "@/components/ui/sonner"
 
 
 const router = createBrowserRouter([
@@ -52,6 +52,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthContextProvider>
       <RouterProvider router={router} />
+      <Toaster richColors />
     </AuthContextProvider>
   </React.StrictMode>
 );

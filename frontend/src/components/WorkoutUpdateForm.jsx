@@ -12,7 +12,7 @@ const WorkoutUpdateForm = ({currentUser, currentToken, onEditWorkout, workout, s
     const [date, setDate] = useState(new Date(workout.date))
     const [error, setError] = useState(null)
     const location = useLocation();
-    const workoutId = location.pathname.split("/")[2];
+    const workoutId = location.pathname.split("/")[2] || workout.id;
     
     const handleSubmit = async (e) => {
         e.preventDefault()

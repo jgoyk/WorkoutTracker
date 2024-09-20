@@ -3,6 +3,7 @@ import WorkoutForm from '../components/WorkoutForm'
 import { AuthContext } from "../context/authContext"
 import axios from "axios"
 import WorkoutDetails from "../components/WorkoutDetails"
+import { toast } from "sonner"
 
 
 function Home() {
@@ -11,12 +12,16 @@ function Home() {
 
   const handleDeleteWorkout = (workoutId) => {
     setWorkouts((prevWorkouts) => prevWorkouts.filter(workout => workout.id !== workoutId));
+    toast.success("Workout has been deleted successfully.")
   };
   const handleAddWorkout = (workout) => {
     setWorkouts([...workouts, workout]);
+    toast.success("Workout has been added successfully.")
+
   };
   const handleEditWorkout = (updatedWorkout) => {
     setWorkouts((prevWorkouts) => prevWorkouts.map(workout => workout.id === updatedWorkout.id ? workout : updatedWorkout));
+    toast.success("Workout has been edited successfully.")
   };
 
   useEffect(() => {

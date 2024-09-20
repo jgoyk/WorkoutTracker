@@ -42,17 +42,18 @@ const WorkoutDetails = ({ workout, currentUser, currentToken, onDeleteWorkout, o
         {editing && <WorkoutUpdateForm workout={workout} onEditWorkout={onEditWorkout} currentUser={currentUser} currentToken={currentToken} setEditing={setEditing}/>}
         <table className="table-auto border border-slate-500">
           <thead className="border border-slate-500">
-            <tr className="flex flex-row justify-around p-2">
-              <th colSpan="1" className="underline">
+            <tr>
+              <th colSpan="3" className="text-center">
                 <Link to={`/workout/${workout.id}`}>
                   {workout.title ? workout.title : "Workout"}
                 </Link>
               </th>
+            </tr>
+            <tr className="flex flex-row justify-around px-2">
               <th colSpan="1" className="font-semibold italic">{workout.date ? `${new Date(workout.date).getUTCMonth()+1}/${new Date(workout.date).getUTCDate()}/${new Date(workout.date).getUTCFullYear()}` : "No Date"}</th>
-              <th >
+              <th className="flex flex-row">
                 <HiOutlineTrash className="h-6 w-6 cursor-pointer" onClick={() => handleDelete(workout.id)}/>
                 <HiOutlinePencilAlt className="h-6 w-6 cursor-pointer" onClick={() => handleEdit(workout.id)} />
-                
               </th>
             </tr>
             

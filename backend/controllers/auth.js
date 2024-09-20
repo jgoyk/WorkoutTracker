@@ -8,9 +8,9 @@ export const register = (req,res)=>{
 
     //check for existing user
     const q = "SELECT * FROM users WHERE email = ? OR username = ?"
-
     db.query(q, [req.body.email, req.body.username], (err,data)=>{
         if(err){
+            console.log(err)
             return res.status(500).json(err)
         }
         if(data.length){
@@ -30,7 +30,10 @@ export const register = (req,res)=>{
         ]
 
         db.query(q,[values],(err,data)=>{
-            if(err) return res.status(500).json(err)
+            if(err){
+                console.log(err)
+                return res.status(500).json(err)
+            } 
             return res.status(200).json("User created")
         })
     
