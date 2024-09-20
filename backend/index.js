@@ -17,9 +17,4 @@ app.use('/api/workouts', workoutRoutes);
 app.use('/api/auth', authRoutes);
 
 
-
-const PORT = process.env.PORT || 8800;
-
-app.listen(PORT, () => {
-    console.log(`Backend server is running on port ${PORT}`);
-})
+export default app;
