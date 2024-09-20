@@ -9,6 +9,7 @@ import { toast } from "sonner"
 function Home() {
   const [workouts, setWorkouts] = useState([])
   const { currentUser, currentToken } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
 
   const handleDeleteWorkout = (workoutId) => {
     setWorkouts((prevWorkouts) => prevWorkouts.filter(workout => workout.id !== workoutId));
@@ -25,11 +26,13 @@ function Home() {
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       try {
 
         if (!currentToken) {
           console.log('No token found, user might not be authenticated');
+          setLoading(false);
           return;
         }
 
@@ -42,12 +45,14 @@ function Home() {
       } catch (err) {
         console.error('Error fetching workouts:', err);
       }
+      setLoading(false);
     };
-
+    setLoading(false);
     if (currentUser && currentToken) {
       fetchData();
     }
   }, [currentUser, currentToken]);
+
 
   
   return (
@@ -55,6 +60,7 @@ function Home() {
       {workouts.map((workout, idx) => (
         <WorkoutDetails currentUser={currentUser} currentToken={currentToken} key={idx} workout={workout} onDeleteWorkout={handleDeleteWorkout} onEditWorkout={handleEditWorkout}/>
       ))}
+      {loading && <div className="font-bold text-center p-2 text-2xl text-blue-600">Loading...</div>}
       {!currentUser ?
         <div className="font-bold text-center p-2 text-2xl text-red-600">
           Please login to see your workouts

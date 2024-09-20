@@ -141,7 +141,7 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
         <div className=" flex flex-row justify-center">
             {stage == 0 && 
                 <div className="" >
-                    <HiOutlinePlusCircle onClick={() => setStage(stage+1)} className="h-16 size-16"/>
+                    <HiOutlinePlusCircle onClick={() => setStage(stage+1)} className="h-16 size-16 hover:stroke-zinc-700 cursor-pointer"/>
                 </div>
             }
             

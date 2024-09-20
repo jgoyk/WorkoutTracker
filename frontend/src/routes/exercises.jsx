@@ -5,7 +5,8 @@ function Exercises() {
 
     return (
       <div className="w-full h-full flex flex-col ">
-        <div>Exercises Page</div>
+        <div>Exercises Page</div>        
+        <div>Coming soon...</div>
       </div>
     )
   }

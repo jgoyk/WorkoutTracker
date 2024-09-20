@@ -78,33 +78,29 @@ function Single() {
   return (
     <div className="w-full h-full flex flex-col ">
       {editing && <WorkoutUpdateForm workout={workout} onEditWorkout={onEditWorkout} currentUser={currentUser} currentToken={currentToken} setEditing={setEditing}/>}
-      <div className="text-xl font-semibold p-2 m-4 text-center">
-        Single Workouts
-      </div>
       {workout && (
         <div className="w-full flex flex-row justify-center">
-          <table className="table-auto border border-slate-500 max-w-lg ">
-            <thead className="border border-slate-500">
-              <tr className="flex flex-row justify-around p-2">
-                <th colSpan="1">{workout.title ? workout.title : "Workout"}</th>
-                <th colSpan="1" className="font-semibold italic">
-                  {workout.date
-                    ? `${new Date(workout.date).getUTCMonth() + 1}/${new Date(
-                        workout.date
-                      ).getUTCDate()}/${new Date(workout.date).getUTCFullYear()}`
-                    : "No Date"}
-                </th>
-                <th className="flex flex-row">
-                  <HiOutlineTrash className="h-6 w-6 cursor-pointer" onClick={() => handleDelete()}/>
-                  <HiOutlinePencilAlt className="h-6 w-6 cursor-pointer" onClick={() => handleEdit()} />
+          <table className="table-auto bg-zinc-300 ">
+            <thead className="">
+              <tr>
+                <th colSpan="3" className="text-center text-xl p-2">
+                  {workout.title ? workout.title : "Workout"}
                 </th>
               </tr>
+              <tr className="flex flex-row justify-between px-2">
+                <th colSpan="1" className="font-semibold italic">{workout.date ? `${new Date(workout.date).getUTCMonth()+1}/${new Date(workout.date).getUTCDate()}/${new Date(workout.date).getUTCFullYear()}` : "No Date"}</th>
+                <th className="flex flex-row">
+                  <HiOutlinePencilAlt className="h-6 w-6 cursor-pointer hover:stroke-zinc-700" onClick={() => handleEdit(workout.id)} />
+                  <HiOutlineTrash className="h-6 w-6 cursor-pointer hover:stroke-zinc-700" onClick={() => handleDelete(workout.id)}/>
+                </th>
+              </tr>
+              
             </thead>
             <tbody>
               {workout?.exercises?.exercises.map((item, index) => (
                 <tr key={index}>
                   <td colSpan="3">
-                    <div className="border border-gray-400 m-2 p-2">
+                    <div className="border border-black m-2 p-2 bg-zinc-200 shadow-sm">
                       <table className="w-full">
                         <thead>
                           <tr>
