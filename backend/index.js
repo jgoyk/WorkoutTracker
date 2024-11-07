@@ -15,6 +15,8 @@ app.use(cors({
 app.use(cookieParser())
 app.use('/api/workouts', workoutRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/exercises', exerciseRoutes);
+
 
 //default export for vercel
 export default app;
