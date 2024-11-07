@@ -1,6 +1,7 @@
 import express from "express"; 
 import "dotenv/config"
 import workoutRoutes from "./routes/workouts.js";
+import exerciseRoutes from "./routes/exercises.js";
 import authRoutes from "./routes/auth.js";
 import cors from 'cors';
 import cookieParser from "cookie-parser";
@@ -15,6 +16,7 @@ app.use(cors({
 app.use(cookieParser())
 app.use('/api/workouts', workoutRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/exercises', exerciseRoutes);
 
 
 

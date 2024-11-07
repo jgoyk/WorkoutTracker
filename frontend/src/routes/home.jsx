@@ -57,9 +57,11 @@ function Home() {
   
   return (
     <div className="w-full h-full flex flex-col ">
-      {workouts.map((workout, idx) => (
-        <WorkoutDetails currentUser={currentUser} currentToken={currentToken} key={idx} workout={workout} onDeleteWorkout={handleDeleteWorkout} onEditWorkout={handleEditWorkout}/>
-      ))}
+      <div className="grid grid-flow-row grid-cols-4">
+        {workouts.map((workout, idx) => (
+          <WorkoutDetails currentUser={currentUser} currentToken={currentToken} key={idx} workout={workout} onDeleteWorkout={handleDeleteWorkout} onEditWorkout={handleEditWorkout}/>
+        ))}
+      </div>
       {loading && <div className="font-bold text-center p-2 text-2xl text-blue-600">Loading...</div>}
       {!currentUser ?
         <div className="font-bold text-center p-2 text-2xl text-red-600">
