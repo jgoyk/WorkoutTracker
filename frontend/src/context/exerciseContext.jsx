@@ -5,7 +5,7 @@ export const ExerciseContext = createContext();
 
 export const ExerciseContextProvider = ({ children }) => {
     const [exercises, setExercises] = useState([]);
-
+    axios.defaults.withCredentials = true;
     const getExercises = async () => {
         try {
             const res = await axios.get(`${import.meta.env.VITE_DB_URL}/exercises`);

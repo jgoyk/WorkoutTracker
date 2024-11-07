@@ -7,7 +7,6 @@ import React, { useContext, useEffect, useState } from "react"
 
 function Exercises() {
   const {exercises, getExercises} = useContext(ExerciseContext);
-  const { currentUser, currentToken } = useContext(AuthContext);
   const [pageNum, setPageNum] = useState(1);
   console.log(exercises);
     return (
