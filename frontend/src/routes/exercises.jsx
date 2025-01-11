@@ -9,47 +9,45 @@ function Exercises() {
   const { exercises } = useContext(ExerciseContext);
   const [filteredExercises, setFilteredExercises] = useState(exercises);
   const [showFilterPopup, setShowFilterPopup] = useState(false);
+  const [filters, setFilters] = useState({});
   const [pageNum, setPageNum] = useState(1);
   const [searchItem, setSearchItem] = useState('');
 
   useEffect(() => {
-    if (exercises) {
-      setFilteredExercises(exercises);
-    }
-  }, [exercises]);
+    if (!exercises) return;
 
-  const handleInputChange = (e) => { 
-    const searchTerm = e.target.value;
-    setSearchItem(searchTerm)
-    const filteredItems = exercises.filter((exercise) =>
-      exercise.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  
-    setFilteredExercises(filteredItems);
-  }
+    let result = exercises;
 
-  const handleApplyFilters = (filters) => {
-    const areAllFiltersEmpty = Object.values(filters).every((value) => !value);
-    if (areAllFiltersEmpty) {
-      setFilteredExercises(exercises);
-      return;
-    }
-
-    const filtered = exercises.filter((exercise) => {
-      return (
-        (!filters.category || exercise.category === filters.category) &&
-        (!filters.level || exercise.level === filters.level) &&
-        (!filters.force || exercise.force === filters.force) &&
-        (!filters.mechanic || exercise.mechanic === filters.mechanic) &&
-        (!filters.equipment || exercise.equipment === filters.equipment)
+    if (searchItem) {
+      result = result.filter((exercise) =>
+        exercise.name.toLowerCase().includes(searchItem.toLowerCase())
       );
-    });
+    }
+    if (filters && Object.values(filters).some((value) => value)) {
+      result = result.filter((exercise) => {
+        return (
+          (!filters.category || exercise.category === filters.category) &&
+          (!filters.level || exercise.level === filters.level) &&
+          (!filters.force || exercise.force === filters.force) &&
+          (!filters.mechanic || exercise.mechanic === filters.mechanic) &&
+          (!filters.equipment || exercise.equipment === filters.equipment)
+        );
+      });
+    }
 
-  
-    setFilteredExercises(filtered);
+    setFilteredExercises(result);
+  }, [exercises, searchItem, filters]);
+
+  const handleInputChange = (e) => {
+    setSearchItem(e.target.value);
   };
 
-  console.log(exercises);
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    setShowFilterPopup(false);
+  };
+
+  //console.log(exercises);
 
   
   return (
@@ -85,13 +83,14 @@ function Exercises() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 p-4">
         {filteredExercises.filter((filteredItem, index) => index < pageNum*8 && index>(pageNum-1)*8-1).map((exerciseData, idx) => (
-          <ExerciseDisplay exercise={exerciseData}/>
+          <ExerciseDisplay exercise={exerciseData} key={idx}/>
         ))}
       </div>
       {showFilterPopup && (
         <FilterPopup
           onApply={handleApplyFilters}
           onClose={() => setShowFilterPopup(false)}
+          initialFilters={filters}
         />
       )}
     </div>

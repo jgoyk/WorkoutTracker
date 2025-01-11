@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const FilterPopup = ({ onApply, onClose }) => {
+const FilterPopup = ({ initialFilters, onApply, onClose }) => {
   const [filters, setFilters] = useState({
     category: "",
     level: "",
@@ -9,6 +9,11 @@ const FilterPopup = ({ onApply, onClose }) => {
     equipment: "",
   });
   
+  useEffect(() => {
+    if (initialFilters) {
+      setFilters(initialFilters);
+    }
+  }, [initialFilters]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -18,6 +23,15 @@ const FilterPopup = ({ onApply, onClose }) => {
   const handleApplyFilters = () => {
     onApply(filters);
     onClose();
+  };
+  const handleClearFilters = () => {
+    setFilters({
+        category: "",
+        level: "",
+        force: "",
+        mechanic: "",
+        equipment: "",
+    });
   };
 
   return (
@@ -84,16 +98,22 @@ const FilterPopup = ({ onApply, onClose }) => {
             </select>
           </div>
         </div>
-        <div className="mt-6 flex justify-end space-x-4">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
-            Cancel
-          </button>
-          <button
-            onClick={handleApplyFilters}
-            className="px-4 py-2 bg-blue-500 text-white rounded"
-          >
-            Apply
-          </button>
+        <div className="mt-6 flex justify-center space-x-4">
+            <button
+                onClick={handleClearFilters}
+                className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+                Clear
+            </button>
+            <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+                Cancel
+            </button>
+            <button
+                onClick={handleApplyFilters}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+            >
+                Apply
+            </button>
         </div>
       </div>
     </div>
