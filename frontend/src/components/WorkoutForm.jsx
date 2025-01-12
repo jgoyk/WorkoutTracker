@@ -1,16 +1,17 @@
 import {  useState } from "react"
 import { HiCheck, HiChevronLeft, HiChevronRight, HiOutlinePlusCircle, HiOutlineTrash, HiOutlineX } from "react-icons/hi";
 import axios from "axios";
+import ExerciseSelectionPopup from "./ExerciseSelectionPopup";
 
 
-const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
-    const [title, setTitle] = useState('')
-    const [numExercises, setNumExercises] = useState(1)
-    const [exercises, setExercises] = useState([["", 1, [[0, 0]]]]) // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
-    const [stage, setStage] = useState(0)
-    const [date, setDate] = useState(new Date())
-    const [error, setError] = useState(null)
-
+const WorkoutForm = ({currentUser, currentToken, onAddWorkout, allExercises}) => {
+    const [title, setTitle] = useState('');
+    const [numExercises, setNumExercises] = useState(1);
+    const [exercises, setExercises] = useState([["", 1, [[0, 0]]]]); // [ [ Name, NumberOfSets, [ {Weight1, Reps1}, ... , {WeightX, RepsX} ] ]
+    const [stage, setStage] = useState(0);
+    const [date, setDate] = useState(new Date());
+    const [error, setError] = useState(null);
+    const [selectingExercise, setSelectingExercise] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -135,6 +136,18 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
         setNumExercises(numExercises + 1);
     }
 
+    function onExerciseClose(){
+        setSelectingExercise(false);
+    }
+    function onExerciseSelect(idx, currExercise){
+        setSelectingExercise(false);
+        const updatedExercises = exercises.map((exercise, i) =>
+            i === idx ? [currExercise.name, exercise[1], exercise[2]] : exercise
+        );
+        setExercises(updatedExercises);
+        console.log(idx)
+    }
+    //old exercise input: <input type="text" onChange={(e) => setExerciseName(e, idx)} value={exercises[idx][0]} required className="p-1 border bg-gray-200 border-gray-700 rounded-md text-center"/>
     
 
     return (
@@ -207,9 +220,24 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout}) => {
                                                         <HiOutlineTrash className="h-6 w-6" />
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-row justify-around">
-                                                    <label className="p-2">Exercise Name: </label>
-                                                    <input type="text" onChange={(e) => setExerciseName(e, idx)} value={exercises[idx][0]} required className="p-1 border bg-gray-200 border-gray-700 rounded-md text-center"/>
+                                                <div className="flex flex-col justify-around">
+                                                    
+                                                    {selectingExercise &&
+                                                        <div className="flex flex-row items-center ">
+                                                            <ExerciseSelectionPopup allExercises={allExercises} onSelectExercise={onExerciseSelect} onClose={onExerciseClose} idx={idx} currentUser={currentUser}/>
+                                                        </div>
+                                                    }
+                                                    <div className="flex flex-row justify-center">
+                                                        <button onClick={() => setSelectingExercise(!selectingExercise)} className="border border-black rounded-lg shadow-md px-2 m-4">Select an exercise</button>
+                                                    </div>
+                                                    <div className="flex flex-row justify-center">
+                                                        <input type="text" placeholder="Current Exercise "disabled value={exercises[idx][0]} required className="px-1 border bg-gray-200 border-gray-700 text-gray-800 placeholder:text-gray-700 placeholder:italic rounded-md text-center w-1/2"/>
+                                                    </div>
+
+                                                    
+                                                    
+                            
+                                                    
                                                 </div>
                                                 {Array(exercises[idx][1]).fill(0).map((x, index) => (
                                                     <div key={index} className="flex flex-col border-2 m-2 pb-2 border-gray-500 rounded-lg shadow-lg bg-slate-200">

@@ -4,12 +4,14 @@ import { AuthContext } from "../context/authContext"
 import axios from "axios"
 import WorkoutDetails from "../components/WorkoutDetails"
 import { toast } from "sonner"
+import { ExerciseContext } from "@/context/exerciseContext"
 
 
 function Home() {
   const [workouts, setWorkouts] = useState([])
   const { currentUser, currentToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
+  const { exercises } = useContext(ExerciseContext);
 
   const handleDeleteWorkout = (workoutId) => {
     setWorkouts((prevWorkouts) => prevWorkouts.filter(workout => workout.id !== workoutId));
@@ -69,7 +71,7 @@ function Home() {
         </div> 
         
         :
-        <WorkoutForm currentUser={currentUser} currentToken={currentToken} onAddWorkout={handleAddWorkout}/>
+        <WorkoutForm currentUser={currentUser} currentToken={currentToken} onAddWorkout={handleAddWorkout} allExercises={exercises}/>
       }
       
     </div>
