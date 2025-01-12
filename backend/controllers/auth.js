@@ -26,7 +26,8 @@ export const register = (req,res)=>{
         const values = [
             req.body.username,
             req.body.email,
-            hash
+            hash,
+            JSON.stringify([])
         ]
 
         db.query(q,[values],(err,data)=>{
@@ -74,3 +75,22 @@ export const logout = (req,res)=>{
       .status(200)
       .json("User has been logged out");
 }
+
+export const updateFavorites = (req, res) => {
+    const { userId, favorites } = req.body;
+
+    if (!Array.isArray(favorites)) {
+        return res.status(400).json("Favorites must be an array");
+    }
+
+    const q = "UPDATE users SET favoriteExercises = ? WHERE id = ?";
+    const values = [JSON.stringify(favorites), userId];
+
+    db.query(q, values, (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json(err);
+        }
+        return res.status(200).json("Favorites updated");
+    });
+};
