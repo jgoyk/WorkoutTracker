@@ -1,5 +1,6 @@
 import ExerciseDisplay from "@/components/ExerciseDisplay";
 import FilterPopup from "@/components/FilterPopup";
+import { AuthContext } from "@/context/authContext";
 import { ExerciseContext } from "@/context/exerciseContext";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react"
@@ -12,10 +13,13 @@ function Exercises() {
   const [filters, setFilters] = useState({});
   const [pageNum, setPageNum] = useState(1);
   const [searchItem, setSearchItem] = useState('');
+  const { currentUser, currentToken } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const [favorites, toggleFavorites] = useState(false);
 
   useEffect(() => {
     if (!exercises) return;
-
+    
     let result = exercises;
 
     if (searchItem) {
@@ -34,9 +38,15 @@ function Exercises() {
         );
       });
     }
+    console.log(favorites)
+    if(favorites){
+      result = result.filter((exercise) => {
+          return currentUser.favoriteExercises.includes(exercise._id);
+      });
+    }
 
     setFilteredExercises(result);
-  }, [exercises, searchItem, filters]);
+  }, [exercises, searchItem, filters, favorites]);
 
   const handleInputChange = (e) => {
     setSearchItem(e.target.value);
@@ -72,18 +82,22 @@ function Exercises() {
               Filter
             </button>
           </div>
-          <div className="flex flex-row">
-            <div className="text-center">Showing exercises: {(pageNum-1)*8+1} to {(pageNum)*8} out of {filteredExercises.length}</div>
-            <div className="flex flex-row justify-center gap-4">
+          <div className="flex flex-col">
+            <div className="text-center">Showing exercises: {(pageNum-1)*8+1} to {filteredExercises.length > (pageNum)*8 ? (pageNum)*8 : filteredExercises.length} out of {filteredExercises.length}</div>
+            <div className="flex flex-row justify-center gap-4 ">
               {pageNum>1 && <FaArrowLeft onClick={() => setPageNum(pageNum-1)} className="float-right"/>}
               <FaArrowRight onClick={() => setPageNum(pageNum+1)} className="float-left"/>
             </div>
+          </div>
+          <div className="flex flex-row p-2 justify-center items-center">
+            <h2 className="px-2">Toggle Favorites</h2>
+            <input type="checkbox" id="favorites" name="favorites" value={favorites} onClick={() => toggleFavorites(!favorites)}></input>
           </div>
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 p-4">
         {filteredExercises.filter((filteredItem, index) => index < pageNum*8 && index>(pageNum-1)*8-1).map((exerciseData, idx) => (
-          <ExerciseDisplay exercise={exerciseData} key={idx}/>
+          <ExerciseDisplay exercise={exerciseData} key={idx} currentUser={currentUser}/>
         ))}
       </div>
       {showFilterPopup && (

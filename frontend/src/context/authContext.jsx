@@ -12,7 +12,9 @@ export const AuthContextProvider = ({children})=>{
 
     const login = async(inputs) => {
         const res = await axios.post(`${import.meta.env.VITE_DB_URL}/auth/login`, inputs)
-        setCurrentUser(res.data.user)
+        const user = res.data.user;
+        user.favoriteExercises = user.favoriteExercises || [];
+        setCurrentUser(user);
         setCurrentToken(res.data.token);
     }
 
@@ -21,6 +23,31 @@ export const AuthContextProvider = ({children})=>{
         setCurrentUser(null)
         setCurrentToken(null);
     }
+
+    const setFavoriteExercises = async (updatedFavorites) => {
+        if (!currentUser) return;
+
+        try {
+            await axios.put(`${import.meta.env.VITE_DB_URL}/auth/favorites`, {
+                userId: currentUser.id,
+                favorites: updatedFavorites,
+            });
+
+            setCurrentUser({ ...currentUser, favoriteExercises: updatedFavorites });
+        } catch (error) {
+            console.error("Error updating favorite exercises:", error);
+        }
+    };
+
+    const toggleFavoriteExercise = (exerciseId) => {
+        if (!currentUser) return;
+        const favorites = currentUser.favoriteExercises || [];
+        const updatedFavorites = favorites.includes(exerciseId)
+            ? favorites.filter((id) => id !== exerciseId) 
+            : [...favorites, exerciseId]; 
+
+    setFavoriteExercises(updatedFavorites);
+    };
 
     useEffect(() => {
         if (currentUser) {
@@ -37,7 +64,7 @@ export const AuthContextProvider = ({children})=>{
     }, [currentUser, currentToken]);
 
     return (
-        <AuthContext.Provider value={{currentUser,currentToken, login, logout}}>
+        <AuthContext.Provider value={{currentUser,currentToken, login, logout, toggleFavoriteExercise}}>
             {children}
         </AuthContext.Provider>
     )

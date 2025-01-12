@@ -22,50 +22,47 @@ export const register = (req,res)=>{
         const hash = bcrypt.hashSync(req.body.password, salt);
         
         //create user
-        const q = "INSERT INTO users (`username`,`email`,`password`) VALUES (?)"
+        const q = "INSERT INTO users (`username`, `email`, `password`, `favoriteExercises`) VALUES (?)";
         const values = [
             req.body.username,
             req.body.email,
-            hash
-        ]
+            hash,
+            JSON.stringify([]) // Default to an empty array
+        ];
 
-        db.query(q,[values],(err,data)=>{
-            if(err){
-                console.log(err)
-                return res.status(500).json(err)
-            } 
-            return res.status(200).json("User created")
-        })
+        db.query(q, [values], (err, data) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).json(err);
+            }
+            return res.status(200).json("User created");
+        });
     
     })
 
 
 }
 
-export const login = (req,res)=>{
-    const q = "SELECT * FROM users WHERE username = ?"
+export const login = (req, res) => {
+    const q = "SELECT * FROM users WHERE username = ?";
 
-    db.query(q,[req.body.username],(err,data)=>{
-        if (err) return res.json(err)
-        if(!data.length) return res.status(404).json("User not found")
+    db.query(q, [req.body.username], (err, data) => {
+        if (err) return res.json(err);
+        if (!data.length) return res.status(404).json("User not found");
 
-        //check password
-        const validPassword = bcrypt.compareSync(req.body.password, data[0].password)
+        const validPassword = bcrypt.compareSync(req.body.password, data[0].password);
+        if (!validPassword) return res.status(400).json("Username or password is incorrect");
 
-        if(!validPassword) return res.status(400).json("Username or password is incorrect")
-        
         const token = jwt.sign({ id: data[0].id }, process.env.JWT_SECRET, { algorithm: 'HS256', expiresIn: "1d" });
-        const { password, ...user } = data[0]; 
-    
-        
+        const { password, ...user } = data[0];
+
         res.cookie("access_token", token, {
             httpOnly: true,
             sameSite: "lax",
             secure: process.env.NODE_ENV === "production",
         }).status(200).json({ user, token });
-        });
-}
-
+    });
+};
 export const logout = (req,res)=>{
     res.clearCookie("access_token", {
         sameSite: "none",
@@ -74,3 +71,22 @@ export const logout = (req,res)=>{
       .status(200)
       .json("User has been logged out");
 }
+
+export const updateFavorites = (req, res) => {
+    const { userId, favorites } = req.body;
+
+    if (!Array.isArray(favorites)) {
+        return res.status(400).json("Favorites must be an array");
+    }
+
+    const q = "UPDATE users SET favoriteExercises = ? WHERE id = ?";
+    const values = [JSON.stringify(favorites), userId];
+
+    db.query(q, values, (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json(err);
+        }
+        return res.status(200).json("Favorites updated");
+    });
+};
