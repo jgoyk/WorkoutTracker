@@ -75,12 +75,15 @@ function Exercises() {
                 className="w-full p-2"
               />
             </div>
-            <button
-              onClick={() => setShowFilterPopup(true)}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Filter
+            <div className="p-2 flex flex-col justify-center">
+              <button
+                onClick={() => setShowFilterPopup(true)}
+                className="px-4 py-2 bg-blue-500 text-white rounded"
+              >
+                Filter
             </button>
+            </div>
+            
           </div>
           <div className="flex flex-col">
             <div className="text-center">Showing exercises: {(pageNum-1)*8+1} to {filteredExercises.length > (pageNum)*8 ? (pageNum)*8 : filteredExercises.length} out of {filteredExercises.length}</div>
@@ -89,16 +92,19 @@ function Exercises() {
               <FaArrowRight onClick={() => setPageNum(pageNum+1)} className="float-left"/>
             </div>
           </div>
+          {currentUser &&
           <div className="flex flex-row p-2 justify-center items-center">
             <h2 className="px-2">Toggle Favorites</h2>
             <input type="checkbox" id="favorites" name="favorites" value={favorites} onClick={() => toggleFavorites(!favorites)}></input>
-          </div>
+          </div>}
         </div>
       </div>
+      <hr className="max-w-full px-8 bg-gray-500 border-0 h-[2px] rounded mx-8 shadow-sm" />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 p-4">
         {filteredExercises.filter((filteredItem, index) => index < pageNum*8 && index>(pageNum-1)*8-1).map((exerciseData, idx) => (
           <ExerciseDisplay exercise={exerciseData} key={idx} currentUser={currentUser}/>
         ))}
+        {filteredExercises.length === 0 && <div className="text-center text-xl font-semibold flex flex-row justify-center">No matching exercises found</div>}
       </div>
       {showFilterPopup && (
         <FilterPopup

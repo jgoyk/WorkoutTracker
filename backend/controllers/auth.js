@@ -27,7 +27,7 @@ export const register = (req,res)=>{
             req.body.username,
             req.body.email,
             hash,
-            JSON.stringify([]) // Default to an empty array
+            JSON.stringify([]) 
         ];
 
         db.query(q, [values], (err, data) => {

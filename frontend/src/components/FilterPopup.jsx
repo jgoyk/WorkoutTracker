@@ -99,14 +99,14 @@ const FilterPopup = ({ initialFilters, onApply, onClose }) => {
           </div>
         </div>
         <div className="mt-6 flex justify-center space-x-4">
+            <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
+                Cancel
+            </button>
             <button
                 onClick={handleClearFilters}
                 className="px-4 py-2 bg-red-500 text-white rounded"
             >
                 Clear
-            </button>
-            <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">
-                Cancel
             </button>
             <button
                 onClick={handleApplyFilters}
