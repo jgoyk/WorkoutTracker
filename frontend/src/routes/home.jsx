@@ -12,6 +12,7 @@ function Home() {
   const { currentUser, currentToken } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const { exercises } = useContext(ExerciseContext);
+  
 
   const handleDeleteWorkout = (workoutId) => {
     setWorkouts((prevWorkouts) => prevWorkouts.filter(workout => workout.id !== workoutId));
@@ -29,30 +30,38 @@ function Home() {
 
   useEffect(() => {
     setLoading(true);
+
     const fetchData = async () => {
-      try {
+        try {
+            if (!currentToken) {
+                console.log("No token found, user might not be authenticated");
+                setLoading(false);
+                return;
+            }
 
-        if (!currentToken) {
-          console.log('No token found, user might not be authenticated');
-          setLoading(false);
-          return;
+            const res = await axios.get(`${import.meta.env.VITE_DB_URL}/workouts`, {
+                headers: {
+                    Authorization: `Bearer ${currentToken}`,
+                },
+            });
+            setWorkouts(res.data);
+        } catch (err) {
+            console.error("Error fetching workouts:", err);
         }
-
-        const res = await axios.get(`${import.meta.env.VITE_DB_URL}/workouts`, {
-          headers: {
-            Authorization: `Bearer ${currentToken}`
-          }
-        });
-        setWorkouts(res.data);
-      } catch (err) {
-        console.error('Error fetching workouts:', err);
-      }
-      setLoading(false);
+        setLoading(false);
     };
-    setLoading(false);
+
     if (currentUser && currentToken) {
-      fetchData();
+        fetchData();
+    } else {
+      setWorkouts([]);
     }
+    setLoading(false);
+    return () => {
+      setWorkouts([]); 
+    };
+
+    
   }, [currentUser, currentToken]);
 
 
@@ -68,8 +77,7 @@ function Home() {
       {!currentUser ?
         <div className="font-bold text-center p-2 text-2xl text-red-600">
           Please login to see your workouts
-        </div> 
-        
+        </div>
         :
         <WorkoutForm currentUser={currentUser} currentToken={currentToken} onAddWorkout={handleAddWorkout} allExercises={exercises}/>
       }

@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
-export const AuthContextProvider = ({children})=>{
+export const AuthContextProvider = ({children, clearWorkouts })=>{
     const [currentUser, setCurrentUser] = useState(JSON.parse(localStorage.getItem("user")) || null)
     const [currentToken, setCurrentToken] = useState(localStorage.getItem("token") || null);
 
@@ -18,7 +18,7 @@ export const AuthContextProvider = ({children})=>{
         setCurrentToken(res.data.token);
     }
 
-    const logout = async(inputs) => {
+    const logout = async() => {
         await axios.post(`${import.meta.env.VITE_DB_URL}/auth/logout`)
         setCurrentUser(null)
         setCurrentToken(null);
@@ -46,8 +46,9 @@ export const AuthContextProvider = ({children})=>{
             ? favorites.filter((id) => id !== exerciseId) 
             : [...favorites, exerciseId]; 
 
-    setFavoriteExercises(updatedFavorites);
+        setFavoriteExercises(updatedFavorites);
     };
+
 
     useEffect(() => {
         if (currentUser) {
@@ -64,7 +65,7 @@ export const AuthContextProvider = ({children})=>{
     }, [currentUser, currentToken]);
 
     return (
-        <AuthContext.Provider value={{currentUser,currentToken, login, logout, toggleFavoriteExercise}}>
+        <AuthContext.Provider value={{currentUser,currentToken, login, logout, toggleFavoriteExercise }}>
             {children}
         </AuthContext.Provider>
     )

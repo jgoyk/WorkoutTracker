@@ -12,7 +12,7 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout, allExercises}) =>
     const [date, setDate] = useState(new Date());
     const [error, setError] = useState(null);
     const [selectingExercise, setSelectingExercise] = useState(false);
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault()
 
@@ -145,7 +145,7 @@ const WorkoutForm = ({currentUser, currentToken, onAddWorkout, allExercises}) =>
             i === idx ? [currExercise.name, exercise[1], exercise[2]] : exercise
         );
         setExercises(updatedExercises);
-        console.log(idx)
+        //console.log(idx)
     }
     //old exercise input: <input type="text" onChange={(e) => setExerciseName(e, idx)} value={exercises[idx][0]} required className="p-1 border bg-gray-200 border-gray-700 rounded-md text-center"/>
     
