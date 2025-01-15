@@ -84,7 +84,7 @@ const WorkoutDetails = ({ workout, currentUser, currentToken, onDeleteWorkout, o
                             <td className="text-center">{set[1]}</td>
                           </tr>
                         ))}
-                        <tr><td colSpan="3" className="text-center text-xs pt-2">Showing {item[2].length > 2 ? 2 : 1} out of {item[2].length} sets</td></tr>
+                        <tr><td colSpan="3" className="text-center text-xs pt-2">Showing {item[2].length >= 2 ? 2 : 1} out of {item[2].length} sets</td></tr>
                       </tbody>
                       
                     </table>

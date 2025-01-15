@@ -14,6 +14,8 @@ const Charts = () => {
   const [hoveredWorkout, setHoveredWorkout] = useState(null);
   const lastHoveredIndex = useRef(null);
   const { currentUser, currentToken } = useContext(AuthContext);
+  const [selectedFormula, setSelectedFormula] = useState("Brzycki");
+  const oneRepMaxFormulas = ["Brzycki", "Epley", "McGlothin", "Lombardi", "Mayhew", "OConner", "Wathan"];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +54,7 @@ const Charts = () => {
         exerciseData[name][formattedDate] = [];
       }
       sets.forEach(([weight, reps]) => {
-        const oneRepMax = weight / (1.0278 - 0.0278 * reps);
+        const oneRepMax = oneRepMaxCalc(weight, reps);
         exerciseData[name][formattedDate].push({ weight, reps, oneRepMax });
       });
     });
@@ -102,6 +104,10 @@ const Charts = () => {
     lastHoveredIndex.current = null; 
   };
 
+  const handleFormulaChange = (event) => {
+    setSelectedFormula(event.target.value);
+  };
+
   const handleHover = (event, elements) => {
     if (elements.length > 0) {
       const index = elements[0].index;
@@ -116,6 +122,33 @@ const Charts = () => {
     }
   };
 
+  function oneRepMaxCalc (weight, reps) {
+    var oneRepMax = 0;
+    switch (selectedFormula) {
+      case "Brzycki":
+        oneRepMax = weight / (1.0278 - 0.0278 * reps);
+        break;
+      case  "Epley":
+        oneRepMax = weight * (1 + (0.0333 * reps)) 
+        break;
+      case "McGlothin":
+        oneRepMax = weight * ((reps + 1) / (reps + 2));
+        break;
+      case "Lombardi":
+        oneRepMax = weight * (Math.pow(reps, 0.10)); 
+        break;
+      case "Mayhew":
+        oneRepMax = (100 * weight) / (52.2 + (41.9 * Math.pow(Math.E,-0.055 * reps)))
+        break;
+      case "OConner":
+        oneRepMax = weight * (1 + (0.025 * reps))
+        break;
+      case "Wathan":
+        oneRepMax = (100 * weight) / (48.8 + (53.8 * Math.pow(Math.E,-0.075) * reps))
+        break;
+    }
+    return oneRepMax;
+  }
   return (
     <div className="p-4 flex">
       {currentUser ? 
@@ -123,6 +156,21 @@ const Charts = () => {
           <div className="flex-grow">
             <h1 className="text-2xl text-center mb-4">Exercise Progression</h1>
             
+            <div className="mb-4 flex flex-col justify-center items-center">
+              <div className="text-sm italic">Select a 1RM Estimation Formula</div>
+              <select
+                className="p-2 border rounded w-1/3"
+                value={selectedFormula || ""}
+                id="formulaSelect"
+                onChange={handleFormulaChange}
+              >
+                {oneRepMaxFormulas.map((formula) => (
+                  <option key={formula} value={formula}>
+                    {formula}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="mb-4 flex flex-row justify-center">
               <select
                 className="p-2 border rounded"
@@ -147,7 +195,7 @@ const Charts = () => {
                   onHover: (event, elements) => handleHover(event, elements),
                   scales: {
                     x: { title: { text: "Date", display: true } },
-                    y: { title: { text: "1RM (kg)", display: true } },
+                    y: { title: { text: "Estimated 1RM (lbs)", display: true } },
                   },
                 }}
               />
@@ -160,7 +208,8 @@ const Charts = () => {
                 <p className="font-bold mb-2">{hoveredWorkout.date}</p>
                 {hoveredWorkout.details.map((set, idx) => (
                   <p key={idx}>
-                    Set {idx+1}: {set.weight} lbs, Reps: {set.reps}
+                    <div className="font-semibold">Set {idx+1}:</div> Weight: <span className="font-semibold">{set.weight} lbs</span>, Reps: <span className="font-semibold">{set.reps}</span>, E1RM: {oneRepMaxCalc(set.weight, set.reps).toFixed(2)} lbs
+                    
                   </p>
                 ))}
               </div>
